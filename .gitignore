@@ -1,0 +1,25 @@
+# Environment
+.env
+rsa_key.p8
+*.p8
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+frontend/node_modules/
+frontend/.next/
+
+# Data (large files)
+data/downloads/
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate*
+terraform/.terraform.lock.hcl
+
+# OS
+.DS_Store

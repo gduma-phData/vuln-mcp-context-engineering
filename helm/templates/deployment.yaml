@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuln-mcp-api
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: vuln-mcp-api
+  template:
+    metadata:
+      labels:
+        app: vuln-mcp-api
+    spec:
+      containers:
+        - name: api
+          image: {{ .Values.api.image }}
+          ports:
+            - containerPort: {{ .Values.api.port }}
+          env:
+            - name: SNOWFLAKE_ACCOUNT
+              value: {{ .Values.snowflake.account }}
+            - name: SNOWFLAKE_USER
+              value: {{ .Values.snowflake.user }}
+            - name: SNOWFLAKE_ROLE
+              value: {{ .Values.snowflake.role }}
+            - name: SNOWFLAKE_WAREHOUSE
+              value: {{ .Values.snowflake.warehouse }}
+            - name: SNOWFLAKE_DB
+              value: {{ .Values.snowflake.database }}
+            - name: SNOWFLAKE_SCHEMA
+              value: {{ .Values.snowflake.schema }}
+            - name: SNOWFLAKE_PRIVATE_KEY_PATH
+              value: /secrets/rsa_key.p8
+          volumeMounts:
+            - name: snowflake-key
+              mountPath: /secrets
+              readOnly: true
+          resources:
+            requests:
+              cpu: {{ .Values.api.resources.requests.cpu }}
+              memory: {{ .Values.api.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.api.resources.limits.cpu }}
+              memory: {{ .Values.api.resources.limits.memory }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: snowflake-key
+          secret:
+            secretName: snowflake-keypair
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vuln-mcp-api
+spec:
+  selector:
+    app: vuln-mcp-api
+  ports:
+    - port: 80
+      targetPort: {{ .Values.api.port }}
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuln-mcp-frontend
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: vuln-mcp-frontend
+  template:
+    metadata:
+      labels:
+        app: vuln-mcp-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {{ .Values.frontend.image }}
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: http://vuln-mcp-api
+          resources:
+            requests:
+              cpu: {{ .Values.frontend.resources.requests.cpu }}
+              memory: {{ .Values.frontend.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.frontend.resources.limits.cpu }}
+              memory: {{ .Values.frontend.resources.limits.memory }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vuln-mcp-frontend
+spec:
+  selector:
+    app: vuln-mcp-frontend
+  ports:
+    - port: 80
+      targetPort: {{ .Values.frontend.port }}
+  type: ClusterIP

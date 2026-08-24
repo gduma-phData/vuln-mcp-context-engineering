@@ -1,0 +1,29 @@
+"""Deploy the Semantic View to Snowflake."""
+import sys
+import pathlib
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+from shared.snowflake_conn import get_snowflake_connection
+
+
+def main():
+    ddl_path = pathlib.Path(__file__).resolve().parents[1] / "snowflake" / "ddl" / "045_create_semantic_view.sql"
+
+    with open(ddl_path) as f:
+        sql = f.read()
+
+    conn = get_snowflake_connection()
+    cursor = conn.cursor()
+    try:
+        for statement in sql.split(";"):
+            statement = statement.strip()
+            if statement and not statement.startswith("--"):
+                cursor.execute(statement)
+        print("Semantic View VULNERABILITY_INTELLIGENCE deployed successfully.")
+    finally:
+        cursor.close()
+        conn.close()
+
+
+if __name__ == "__main__":
+    main()
