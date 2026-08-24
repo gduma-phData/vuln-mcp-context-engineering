@@ -5,12 +5,18 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - SNOWFLAKE_PRIVATE_KEY_PATH=/secrets/rsa_key.p8
     volumes:
       - ./data:/app/data
+      - /Users/gduma/Documents/client_work/GAIG/agent-eval-best-practices/rsa_key.p8:/secrets/rsa_key.p8:ro
     command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     ports:
       - "3000:3000"
     depends_on:

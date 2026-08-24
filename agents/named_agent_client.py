@@ -59,32 +59,43 @@ def _generate_jwt_token():
 
 def _get_agent_endpoint():
     account = os.getenv("SNOWFLAKE_ACCOUNT")
-    db = os.getenv("SNOWFLAKE_DB", "SANDBOX")
-    schema = os.getenv("SNOWFLAKE_SCHEMA", "GDUMA")
-    agent_name = os.getenv("CORTEX_AGENT_NAME", "VULN_INTELLIGENCE_AGENT")
     host = f"{account}.snowflakecomputing.com"
-    return f"https://{host}/api/v2/databases/{db}/schemas/{schema}/agents/{agent_name}:run"
+    # Use ad-hoc endpoint for now; switch to named agent endpoint once MCP is configured:
+    # return f"https://{host}/api/v2/databases/{db}/schemas/{schema}/agents/{agent_name}:run"
+    return f"https://{host}/api/v2/cortex/agent:run"
 
 
 def call_named_agent(question: str, role: str = None, thread_id: int = None, parent_message_id: int = None) -> dict:
-    """Call the named Cortex Agent with MCP + SV + Search tools."""
+    """Call Cortex Agent with SV + Search tools (uses ad-hoc endpoint; named agent for MCP)."""
+    db = os.getenv("SNOWFLAKE_DB", "SANDBOX")
+    schema = os.getenv("SNOWFLAKE_SCHEMA", "GDUMA")
+    model = os.getenv("CORTEX_MODEL", "openai-gpt-4.1")
     warehouse = os.getenv("SNOWFLAKE_WAREHOUSE", "DEFAULT_USER_WH")
 
     token = _generate_jwt_token()
     endpoint = _get_agent_endpoint()
 
     request_body = {
+        "model": model,
+        "tools": [
+            {"tool_spec": {"name": "vulnerability_sv", "type": "cortex_analyst_text_to_sql"}},
+            {"tool_spec": {"name": "vuln_standards_kb", "type": "cortex_search"}},
+        ],
+        "tool_resources": {
+            "vulnerability_sv": {"semantic_view": f"{db}.{schema}.VULNERABILITY_INTELLIGENCE"},
+            "vuln_standards_kb": {
+                "search_service": f"{db}.{schema}.VULN_STANDARDS_SEARCH",
+                "id_column": "document_name",
+                "title_column": "document_name",
+            },
+        },
         "messages": [{"role": "user", "content": [{"type": "text", "text": question}]}],
     }
-
-    if thread_id is not None:
-        request_body["thread_id"] = thread_id
-        request_body["parent_message_id"] = parent_message_id or 0
 
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "Accept": "text/event-stream",
+        "Accept": "application/json",
         "X-Snowflake-Authorization-Token-Type": "KEYPAIR_JWT",
     }
     if role:
