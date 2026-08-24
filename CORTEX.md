@@ -3,6 +3,13 @@
 The phData POC account (637119802057) runs automated cleanup every Monday at 12:00am EDT.
 This document lists all AWS resources that must be recreated after each weekly reset.
 
+## Current Live URLs (as of 2026-08-24)
+
+- API: `http://af47646dd8025463088e07462513bd8e-1955463065.us-east-1.elb.amazonaws.com`
+- Frontend: `http://a864e64759de04dd9bea65a4fd86c6bb-1432444262.us-east-1.elb.amazonaws.com`
+
+These URLs change if the EKS cluster or LoadBalancer services are deleted and recreated.
+
 ## Resources Affected by Weekly Cleanup
 
 | Resource | Type | Notes |
