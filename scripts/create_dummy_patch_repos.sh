@@ -90,7 +90,7 @@ for entry in "${PATCHES[@]}"; do
 - **Severity**: ${severity}
 - **CISA KEV**: Yes (confirmed exploited in the wild)
 
-## Patch Status: ${status^^}
+## Patch Status: $(echo "$status" | tr '[:lower:]' '[:upper:]')
 
 | Field | Value |
 |-------|-------|
