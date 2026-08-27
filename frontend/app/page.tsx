@@ -24,7 +24,15 @@ export default function Home() {
           <div className="status-pills">
             <div className="status-pill"><span className="dot" />Semantic View</div>
             <div className="status-pill"><span className="dot" />Cortex Search</div>
-            <div className="status-pill"><span className="dot" />GitHub MCP</div>
+            <a
+              className="status-pill mcp-cowork"
+              href="https://app.snowflake.com/ra89421.east-us-2.azure/ra89421/#/compute/cowork"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="GitHub MCP available in CoWork (requires Snowsight OAuth)"
+            >
+              <span className="dot cowork" />GitHub MCP (CoWork)
+            </a>
           </div>
         </div>
       </header>

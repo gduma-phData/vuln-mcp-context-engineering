@@ -1,14 +1,17 @@
 """FastAPI Backend for Vulnerability Intelligence + MCP Context Engineering Demo."""
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from agents.named_agent_client import call_named_agent
+from agents.named_agent_client import call_named_agent, call_named_agent_with_mcp
 from agents.search_client import search_kb
+from agents.oauth_flow import start_oauth_flow, finish_oauth_flow, check_oauth_status
+from agents.ontology_monitor import scan_ontology_updates
 
 app = FastAPI(title="Vulnerability Intelligence - MCP Context Engineering")
 
@@ -40,7 +43,7 @@ async def health():
 
 @app.post("/agent/chat")
 async def agent_chat(request: ChatRequest):
-    """Send a question to the named Cortex Agent (SV + Search + GitHub MCP)."""
+    """Send a question to the Cortex Agent (SV + Search). MCP available in CoWork."""
     try:
         result = call_named_agent(
             request.question,
@@ -48,6 +51,58 @@ async def agent_chat(request: ChatRequest):
             thread_id=request.thread_id,
             parent_message_id=request.parent_message_id,
         )
+        return {"status": "success", **result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/mcp/oauth/status")
+async def mcp_oauth_status():
+    """Check if GitHub MCP OAuth is connected for the current Snowflake user."""
+    try:
+        result = check_oauth_status()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/mcp/oauth/start")
+async def mcp_oauth_start():
+    """Start GitHub OAuth flow. Returns the Snowflake-hosted authorization URL.
+    
+    The user must be logged into Snowsight in the same browser for this URL to work.
+    Snowflake handles the full OAuth round-trip with GitHub.
+    """
+    try:
+        result = start_oauth_flow()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/mcp/oauth/callback")
+async def mcp_oauth_callback(request: Request):
+    """Handle OAuth callback from GitHub. Passes the full query string to Snowflake."""
+    try:
+        # Pass the entire query string to SYSTEM$FINISH_OAUTH_FLOW
+        full_query_string = str(request.url.query)
+        result = finish_oauth_flow(query_string=full_query_string)
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        if result.get("connected"):
+            return RedirectResponse(url=f"{frontend_url}?mcp_connected=true")
+        # If it failed, redirect with error
+        error_msg = result.get("error", "OAuth flow failed")
+        return RedirectResponse(url=f"{frontend_url}?mcp_error={error_msg}")
+    except Exception as e:
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        return RedirectResponse(url=f"{frontend_url}?mcp_error={str(e)}")
+
+
+@app.post("/ontology/scan")
+async def ontology_scan():
+    """Scan GitHub ontology repos and propose semantic view updates."""
+    try:
+        result = scan_ontology_updates()
         return {"status": "success", **result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

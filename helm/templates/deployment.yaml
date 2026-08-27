@@ -32,6 +32,12 @@ spec:
               value: {{ .Values.snowflake.schema }}
             - name: SNOWFLAKE_PRIVATE_KEY_PATH
               value: /secrets/rsa_key.p8
+            - name: API_BASE_URL
+              value: {{ .Values.api.baseUrl | default "" | quote }}
+            - name: FRONTEND_URL
+              value: {{ .Values.frontend.baseUrl | default "" | quote }}
+            - name: GITHUB_MCP_CLIENT_ID
+              value: {{ .Values.github.mcpClientId | default "Iv23liyRuSENCxUvzaLu" | quote }}
           volumeMounts:
             - name: snowflake-key
               mountPath: /secrets

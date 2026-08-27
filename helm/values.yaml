@@ -2,6 +2,7 @@ api:
   image: vuln-mcp-api:latest
   replicas: 2
   port: 8000
+  baseUrl: ""
   resources:
     requests:
       cpu: 250m
@@ -14,6 +15,7 @@ frontend:
   image: vuln-mcp-frontend:latest
   replicas: 2
   port: 3000
+  baseUrl: ""
   resources:
     requests:
       cpu: 100m
@@ -29,6 +31,9 @@ snowflake:
   warehouse: "DEFAULT_USER_WH"
   database: "SANDBOX"
   schema: "GDUMA"
+
+github:
+  mcpClientId: "Iv23liyRuSENCxUvzaLu"
 
 ingress:
   enabled: false

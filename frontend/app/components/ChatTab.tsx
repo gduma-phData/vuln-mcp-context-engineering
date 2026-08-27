@@ -69,11 +69,44 @@ export default function ChatTab() {
     <div className="chat-container">
       <div className="chat-messages">
         {messages.length === 0 && (
-          <div style={{ textAlign: "center", marginTop: "60px", color: "var(--text-muted)" }}>
-            <p style={{ fontSize: "18px", marginBottom: "8px" }}>Ask the Vulnerability Intelligence Agent</p>
-            <p style={{ fontSize: "13px" }}>
-              Powered by Cortex Agent with Semantic View + Knowledge Base + GitHub MCP
-            </p>
+          <div className="chat-empty-state">
+            <div className="empty-hero">
+              <div className="empty-icon">?</div>
+              <h2>Vulnerability Intelligence Agent</h2>
+              <p className="empty-subtitle">
+                Ask questions about CVEs, exploit probability, patch status, and security standards.
+                Powered by Cortex Agent with Semantic View and Knowledge Base.
+              </p>
+            </div>
+
+            <div className="empty-capabilities">
+              <div className="capability-card">
+                <div className="capability-icon sv-icon">SV</div>
+                <div className="capability-label">Semantic View</div>
+                <div className="capability-desc">Query 8K+ CVEs, CVSS scores, EPSS probability, CISA KEV status</div>
+              </div>
+              <div className="capability-card">
+                <div className="capability-icon kb-icon">KB</div>
+                <div className="capability-label">Knowledge Base</div>
+                <div className="capability-desc">RAG over NVD, CVSS, EPSS, KEV, CWE, and ATT&CK documentation</div>
+              </div>
+              <div className="capability-card">
+                <div className="capability-icon mcp-icon">MCP</div>
+                <div className="capability-label">GitHub MCP</div>
+                <div className="capability-desc">Patch repo lookups via native MCP connector (available in CoWork)</div>
+              </div>
+            </div>
+
+            <div className="empty-suggestions">
+              <p className="suggestions-label">Try asking</p>
+              <div className="suggestion-cards">
+                {SAMPLE_QUESTIONS.map((q) => (
+                  <button key={q} className="suggestion-card" onClick={() => sendMessage(q)}>
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {messages.map((msg, i) => (
@@ -134,15 +167,6 @@ export default function ChatTab() {
             Send
           </button>
         </div>
-        {messages.length === 0 && (
-          <div className="sample-questions">
-            {SAMPLE_QUESTIONS.map((q) => (
-              <button key={q} className="sample-q" onClick={() => sendMessage(q)}>
-                {q}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

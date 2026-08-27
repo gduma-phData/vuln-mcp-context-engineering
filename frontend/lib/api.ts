@@ -31,3 +31,12 @@ export async function getSVYaml(): Promise<any> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
+
+export async function scanOntology(): Promise<any> {
+  const res = await fetch(`${API_URL}/ontology/scan`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}

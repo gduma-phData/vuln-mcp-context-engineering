@@ -98,6 +98,23 @@ body {
   background: var(--accent-green);
 }
 
+.status-pill.mcp-cowork {
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--accent-purple);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.status-pill.mcp-cowork:hover {
+  background: rgba(167, 139, 250, 0.2);
+}
+
+.status-pill .dot.cowork {
+  background: var(--accent-purple);
+}
+
 .tabs {
   display: flex;
   border-bottom: 1px solid var(--border);
@@ -145,8 +162,154 @@ body {
   gap: 16px;
 }
 
+/* Empty state - hero layout */
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 40px 24px;
+  gap: 40px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.empty-hero {
+  text-align: center;
+}
+
+.empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  margin: 0 auto 16px;
+}
+
+.empty-hero h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.empty-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.empty-capabilities {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.capability-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.capability-card:hover {
+  border-color: var(--text-muted);
+}
+
+.capability-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+}
+
+.capability-icon.sv-icon {
+  background: rgba(74, 158, 255, 0.15);
+  color: var(--accent-blue);
+}
+
+.capability-icon.kb-icon {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--accent-purple);
+}
+
+.capability-icon.mcp-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-orange);
+}
+
+.capability-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.capability-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.empty-suggestions {
+  width: 100%;
+}
+
+.suggestions-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.suggestion-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestion-card {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.suggestion-card:hover {
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
 .message {
-  max-width: 85%;
+  max-width: 95%;
   padding: 12px 16px;
   border-radius: var(--radius);
   font-size: 14px;
@@ -254,29 +417,6 @@ body {
 .send-btn:hover { opacity: 0.9; }
 .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.sample-questions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.sample-q {
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.sample-q:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
 /* SV Tab */
 .sv-container {
   padding: 24px;
@@ -341,6 +481,149 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
+  gap: 24px;
+}
+
+.ontology-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.ontology-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ontology-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.ontology-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.scan-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-purple);
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--accent-purple);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scan-btn:hover {
+  background: rgba(167, 139, 250, 0.2);
+}
+
+.scan-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ontology-scanning {
+  padding: 16px 0;
+}
+
+.ontology-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ontology-repos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ontology-repo-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.repo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.repo-priority {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.repo-link {
+  font-size: 12px;
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.repo-link:hover {
+  text-decoration: underline;
+}
+
+.repo-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.ontology-tools {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ontology-analysis {
+  background: var(--bg-primary);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.ontology-analysis h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-purple);
+  margin-bottom: 10px;
+}
+
+.analysis-content {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.kb-search-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.kb-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
 }
 
 .kb-search-row {
